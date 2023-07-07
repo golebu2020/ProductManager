@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-%d=rhvz%v40p5os8z_hpdwjl%+yrg-v1t*&p+8$p&%!aj=q$xs'
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = str(os.environ.get("DEBUG")) == "1"
 
 ALLOWED_HOSTS = []
 
@@ -81,6 +81,33 @@ DATABASES = {
     }
 }
 
+DB_DATABASE = os.environ.get("POSTGRES_DB")
+DB_USERNAME = os.environ.get("POSTGRES_USER")
+DB_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+DB_PORT = os.environ.get("POSTGRES_PORT")
+DB_HOST = os.environ.get("POSTGRES_HOST")
+
+DB_IS_AVAIL=all([
+    DB_DATABASE,
+    DB_USERNAME,
+    DB_PASSWORD,
+    DB_PORT,
+    DB_HOST,
+])
+
+if DB_IS_AVAIL:
+    DATABASES = {
+    'default': {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME":DB_DATABASE,
+        "USER":DB_USERNAME,
+        "PASSWORD":DB_PASSWORD,
+        "HOST":DB_HOST,
+        "PORT":DB_PORT,
+    }
+}
+    
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
